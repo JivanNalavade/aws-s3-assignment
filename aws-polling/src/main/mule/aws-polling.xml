@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:s3="http://www.mulesoft.org/schema/mule/s3" xmlns:sns="http://www.mulesoft.org/schema/mule/sns"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/sns http://www.mulesoft.org/schema/mule/sns/current/mule-sns.xsd
+http://www.mulesoft.org/schema/mule/s3 http://www.mulesoft.org/schema/mule/s3/current/mule-s3.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="b2ab82d5-219a-4beb-bb1a-58ce37ec725d" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<sns:config name="Amazon_SNS_configuration" doc:name="Amazon SNS configuration" doc:id="963456b3-522c-4fe7-97d9-fe2fa6943d2e" >
+		<sns:basic-connection accessKey="AKIAJWKZDPLHRO4WPP7A" secretKey="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" />
+	</sns:config>
+	<s3:config name="Amazon_S3_Configuration" doc:name="Amazon S3 Configuration" doc:id="65f654cf-92b5-4d62-ae63-28ec8b8b7cdb" >
+		<s3:basic-connection accessKey="AKIAJWKZDPLHRO4WPP7A" secretKey="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" />
+	</s3:config>
+	<flow name="aws-pollingFlow" doc:id="f14fa198-003f-4c90-8d9c-6ab75baca810" >
+		<http:listener doc:name="Listener" doc:id="6c0018da-7eb4-4204-8ed6-3f16f91d717a" config-ref="HTTP_Listener_config" path="/getAWSNotification"/>
+		<ee:transform doc:name="Transform Message" doc:id="81d6e762-397a-4708-bf83-a861e0b06f15" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="d58f3981-ef46-497c-a098-a42c2860398d" message="payload from AWS :: #[payload]"/>
+		<s3:get-object doc:name="Get object" doc:id="c446fbb1-f7e5-4323-9e8e-ba93190a5490" config-ref="Amazon_S3_Configuration" key="#[payload..key]" bucketName="bucket-apisero-jivan"/>
+		<logger level="INFO" doc:name="Logger" doc:id="75d436a8-2b4c-45a9-88bd-ea55822d9814" message="file content :: #[payload]"/>
+	</flow>
+</mule>
