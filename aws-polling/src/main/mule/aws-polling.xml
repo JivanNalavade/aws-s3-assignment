@@ -14,7 +14,7 @@ http://www.mulesoft.org/schema/mule/s3 http://www.mulesoft.org/schema/mule/s3/cu
 		<sns:basic-connection accessKey="AKIAJWKZDPLHRO4WPP7A" secretKey="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" />
 	</sns:config>
 	<s3:config name="Amazon_S3_Configuration" doc:name="Amazon S3 Configuration" doc:id="65f654cf-92b5-4d62-ae63-28ec8b8b7cdb" >
-		<s3:basic-connection accessKey="AKIAJWKZDPLHRO4WPP7A" secretKey="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" />
+		<s3:basic-connection accessKey="" secretKey="" />
 	</s3:config>
 	<flow name="aws-pollingFlow" doc:id="f14fa198-003f-4c90-8d9c-6ab75baca810" >
 		<http:listener doc:name="Listener" doc:id="6c0018da-7eb4-4204-8ed6-3f16f91d717a" config-ref="HTTP_Listener_config" path="/getAWSNotification"/>
